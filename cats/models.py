@@ -9,6 +9,12 @@ from django.contrib.auth.models import User
 class Cat(models.Model):
     owner = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     name = models.CharField(max_length=255, verbose_name='Имя')
-    age = models.IntegerField(default=0,verbose_name='Возраст')
+    age = models.IntegerField(default=0, verbose_name='Возраст')
     breed = models.CharField(max_length=255, verbose_name='Порода')
     color = models.CharField(max_length=255, verbose_name='Окрас')
+
+    def __str__(self):
+        return (str(self.pk)+ " " + str(self.name))
+
+    def get_pk(self):
+        	return(self.pk)  

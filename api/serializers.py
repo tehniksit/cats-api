@@ -1,15 +1,28 @@
-from rest_framework import serializers
+from rest_framework import serializers, permissions, generics
+from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope, TokenHasScope
 
-from cats_api.cats.models import Cat, User
+from django.contrib.auth.models import User
+from cats_api.cats.models import *
 
-class OwnerSerializer(serializers.ModelSerializer):
 
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('name' )
+        fields = ('username', 'email', "first_name", "last_name")
+
+class UserList(generics.ListCreateAPIView):
+    permission_classes = [permissions.IsAuthenticated, TokenHasReadWriteScope]
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+class UserDetails(generics.RetrieveAPIView):
+    permission_classes = [permissions.IsAuthenticated, TokenHasReadWriteScope]
+    queryset = User.objects.all()
+    serializer_class = UserSerializer            
 
 class CatsSerializer(serializers.ModelSerializer):
 
-    class Meta:
-        model = Cat
-        fields = ('name', 'age', 'breed', 'color')
+	owner = serializers.StringRelatedField()
+	class Meta:
+		model = Cat
+		fields = ('owner','name', 'age', 'breed', 'color', 'pk')
